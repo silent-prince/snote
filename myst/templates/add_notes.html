@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Note</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white text-center p-4 text-lg font-bold">
+        Edit Note
+    </header>
+
+    <!-- Custom Form -->
+    <div class="flex-1 p-4">
+        <form method="POST" class="bg-white p-6 rounded-lg shadow-md" onsubmit="submitForm(event)">
+            {% csrf_token %}
+            
+            <!-- Title Input -->
+            <label for="title" class="block font-semibold mb-2 text-gray-700">Title</label>
+            <input type="text" id="title" name="title" value="{{ note.title }}"
+                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+
+            <!-- Editable Content Div -->
+            <label for="content" class="block font-semibold mt-4 mb-2 text-gray-700">Content</label>
+            <div id="content" contenteditable="true"
+                class="w-full p-3 border rounded-lg h-80 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto">
+                {{ note.content|safe }}
+            </div>
+
+            <!-- Hidden Input to Store Content -->
+            <input type="hidden" id="hiddenContent" name="content">
+
+            <!-- Save Button -->
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg mt-4 hover:bg-blue-700 transition">
+                Update Note
+            </button>
+        </form>
+    </div>
+
+    <!-- Back Button -->
+    <a href="{% url 'notes_page' %}" class="fixed bottom-6 left-6 bg-gray-500 text-white p-4 rounded-full shadow-lg text-xl">
+        ←
+    </a>
+
+    <script>
+        function submitForm(event) {
+            // Get content from the editable div
+            document.getElementById("hiddenContent").value = document.getElementById("content").innerHTML;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' type='text/css' media='screen' href="{% static 'css/notes.css' %}" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+    <title>Notes</title>
+
+</head>
+<body>
+    <header>My Notes</header>
+
+    <div id="notesList">
+        {% for note in notes %}
+        <a href="{% url 'edit_note' note.id %}" class="note-item">
+            <div class="note-title">{{ note.title }}</div>
+            <div class="note-content">{{ note.content|safe }}</div>
+            <div class="messageStatus">
+                <div class="note-timing" timing="{{note.created_at|date:'c'}}"></div>
+            </div>
+        </a>
+        {% empty %}
+        <p style="text-align: center; color: #6b7280;">No notes found.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'add_note' %}" class="add-btn">+</a>
+    <a href="{% url 'user_logout' %}" class="logout-btn">Logout</a>
+
+    <form id="noteForm" method="POST">
+        {% csrf_token %}
+        <textarea id="content" name="content" placeholder="Enter your note..."></textarea>
+        <div class="code-warp">
+        <input type="text" style="flex: 0.98;" id="title" name="title" placeholder="Title">
+        <div id="timerdiv">
+            <div id="progressdiv"></div>
+        </div>
+        <button type="submit" id="submitButton">Add</button>
+        </div>
+    </form>
+    <script>
+        let get_notes="{% url 'get_notes' %}";
+        let add_note="{% url 'add_note' %}";
+        let myusername = "{{ request.user.username }}";
+        //console.log("Whois from session:", whois);
+    </script>
+    <script src="{% static 'js/notes.js' %}" ></script>
+</body>
+</html>

@@ -25,12 +25,13 @@ SECRET_KEY = "django-insecure-(nynq-2x7wpsiqp=98+$%0n^il)lj9z!f&ck2c2ic^88qhw7vm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com']
+ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com','localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "myst",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,7 +51,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "snote.urls"
-
+LOGIN_URL = '/notes_login/'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

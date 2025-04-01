@@ -1,0 +1,155 @@
+body {
+    background-color: #f3f4f6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+header {
+    background-color: #2563eb;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#notesList {
+    flex: 1;
+padding: 5px;
+overflow-y: auto;
+margin-bottom: 125px;
+}
+
+.note-item {
+    display: block;
+    background-color: white;
+    padding: 8px 8px 1px 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    border: 1.5px solid #25db00;
+}
+
+.note-item:hover {
+    background-color: #e5e7eb;
+}
+
+.note-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1f2937;
+}
+.note-timing{
+    color: #1f2937;
+    margin-left: auto;
+    font-size: 14px;
+}
+
+.note-content {
+    color: #4b5563;
+    
+}
+
+.add-btn, .logout-btn {
+    position: fixed;
+    background-color: #2563eb;
+    color: white;
+    padding: 16px;
+    border-radius: 50%;
+    font-size: 24px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-btn {
+    bottom: 24px;
+    right: 24px;
+}
+
+.logout-btn {
+    top: 16px;
+    right: 16px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #dc2626;
+}
+
+#noteForm {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 5px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+.code-warp{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+textarea, input {
+    
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+button {
+    
+    background-color: #2563eb;
+    color: white;
+    padding: 2px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+}
+#timerdiv {
+    display:none;
+    flex: 0.98;
+    margin-bottom: 8px;
+    height: 30px;
+    background-color: lightgray;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+#progressdiv {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(132, 255, 132);
+    transition: width linear;
+}
+.messageStatus {
+    display: flex;
+    margin-top: 5px;
+}
+.resend {
+    background: #ffcadc;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-left: 12px;
+}
+.statusText {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-family: math;
+}
