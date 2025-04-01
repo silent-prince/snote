@@ -202,7 +202,7 @@ $(document).ready(function(){
         console.log("after sl "+scode+" "+content);
         return false;
     }
-    Pusher.logToConsole = true;
+    //Pusher.logToConsole = true;
     var pusher = new Pusher('3d2b17bf76b92c8f20cd', {
       cluster: 'ap2'
     });
@@ -210,9 +210,6 @@ $(document).ready(function(){
         // Listen for a single event with all data
         receiverChannel.bind('new-message-event', function(data) {
             if(secretSession){
-                console.log("Sender Username:", data.username);
-                console.log("Message Content:", data.content);
-                console.log("Message Timestamp:", data.created_at);
                 //createElement("",data.content,"00","00");
                 let notesList = $("#notesList");
                 let noteItem = $('<a>', {
