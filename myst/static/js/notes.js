@@ -230,6 +230,22 @@ $(document).ready(function(){
     var pusher = new Pusher('3d2b17bf76b92c8f20cd', {
       cluster: 'ap2'
     });
+    pusher.connection.bind('connected', function() {
+        createElement("iniatiate", "connected", "00", "",null,"","","");
+        console.log("Pusher connected. ");
+        
+    });
+    pusher.connection.bind('disconnected', function() {
+        createElement("disconnected log", "end", "00", "",null,"","","");
+        console.log("Pusher disconnected. ");
+    });
+    function checkConnection() {
+        let dateTime = new Date().toLocaleString("en-US", { hour12: false });
+        createElement(pusher.connection.state, dateTime, "00", "",null,"","","");
+            console.log("connecton check every 10 sec "+pusher.connection.state);
+            
+    }
+    setInterval(checkConnection, 10000); // Check every 10 seconds
     const receiverChannel = pusher.subscribe(`receiver-channel-${myusername}`);
         // Listen for a single event with all data
         receiverChannel.bind('new-message-event', function(data) {
