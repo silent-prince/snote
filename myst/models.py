@@ -15,6 +15,7 @@ class Note(models.Model):
     mode = models.CharField(max_length=100, blank=True, null=True, default="zero")
     title = models.CharField(max_length=255,blank=True, null=True,default="")
     content = models.TextField()
+    reply = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replies")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

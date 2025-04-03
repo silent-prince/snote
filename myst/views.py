@@ -8,6 +8,8 @@ def notes_page(request):
     return manageNotes.notes_page(request)
 def add_note(request):
     return manageNotes.add_note(request)
+def update_note(request):
+    return manageNotes.update_note(request)
 def notes_login(request):
     return manageLogin.notes_login(request)
 def choosewho(request):

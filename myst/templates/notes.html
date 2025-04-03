@@ -7,6 +7,7 @@
     <link rel='stylesheet' type='text/css' media='screen' href="{% static 'css/notes.css' %}" >
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+    
     <title>Notes</title>
 
 </head>
@@ -15,23 +16,32 @@
 
     <div id="notesList">
         {% for note in notes %}
-        <a href="{% url 'edit_note' note.id %}" class="note-item">
+        <div noteid="{{note.id }}" class="note-item zero-list-item">
             <div class="note-title">{{ note.title }}</div>
             <div class="note-content">{{ note.content|safe }}</div>
             <div class="messageStatus">
                 <div class="note-timing" timing="{{note.created_at|date:'c'}}"></div>
             </div>
-        </a>
+        </div>
         {% empty %}
         <p style="text-align: center; color: #6b7280;">No notes found.</p>
         {% endfor %}
     </div>
 
-    <a href="{% url 'add_note' %}" class="add-btn">+</a>
     <a href="{% url 'user_logout' %}" class="logout-btn">Logout</a>
-
+    <div class="newMessageScroll">
+        <div class="newMessage">new message</div>
+        <div class="scrollnew">⏬</div>
+        </div>
     <form id="noteForm" method="POST">
         {% csrf_token %}
+        <div class="reply-wrap" reply-id="00">
+            <div class="reply-head">
+                <div class="reply-who"></div>
+                <div class="reply-cancel">x</div>
+            </div>
+            <div class="reply-message"></div>
+        </div>
         <textarea id="content" name="content" placeholder="Enter your note..."></textarea>
         <div class="code-warp">
         <input type="text" style="flex: 0.98;" id="title" name="title" placeholder="Title">
@@ -41,12 +51,36 @@
         <button type="submit" id="submitButton">Add</button>
         </div>
     </form>
+    <div class="option-popup-bg">
+        <div class="option-popup">
+            <div class="option-popup-header">Actions</div>
+            <div class="option-popup-actions">
+                <div class="option-popup-edit">Edit</div>
+                <div class="option-popup-delete">Delete</div>
+            </div>
+            <div class="option-popup-cancel">Cancel</div>
+        </div>
+    </div>
+    <div class="editor-popup-bg">
+        <div class="editor-popup">
+            <textarea class="editor-popup-title">Title</textarea>
+            <textarea class="editor-popup-content">Content</textarea>
+        </div>
+        <div class="editor-popup-action">
+            <div class="editor-popup-cancel">cancel</div>
+            <div class="editor-popup-save">update</div>
+        </div>
+    </div>
     <script>
         let get_notes="{% url 'get_notes' %}";
         let add_note="{% url 'add_note' %}";
+        let update_note="{% url 'update_note' %}";
         let myusername = "{{ request.user.username }}";
+        let csrfToken = $("[name=csrfmiddlewaretoken]").val();
         //console.log("Whois from session:", whois);
     </script>
     <script src="{% static 'js/notes.js' %}" ></script>
+    <script src="{% static 'js/drag.js' %}" ></script>
+    <script src="{% static 'js/touchhold.js' %}" ></script>
 </body>
 </html>

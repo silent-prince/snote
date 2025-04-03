@@ -12,9 +12,9 @@ $(document).ready(function(){
                 contentType: "application/json",
                 data: JSON.stringify({ mode: mode }),
                 success: function(data) {
-                    console.log("start "+data);
+                    //console.log("Formatted Data:", JSON.stringify(data, null, 2));
                     if (data.success) {
-                        console.log("if success "+data.success);
+                        //console.log("if success "+data.success);
                         let notesList = $("#notesList");
                         notesList.empty();
                         
@@ -25,11 +25,26 @@ $(document).ready(function(){
                         }
                         
                         $.each(data.notes, function(index, note) {
+                            let replyData = note.reply_id; // reply_id is now an object
                             //let title = note.mode === "secret" ? formatNoteTitle(note.created_at) : note.title;
-                            let noteItem = $('<a>', {
-                                href: `/edit-note/${note.id}/`,
-                                class: "note-item",
-                                html: `<div class="note-title">${note.title}</div>
+                            let replyHtml = ""; // Default empty, add only if reply exists
+                            let rightleft="";
+                            if(mode==="secret")
+                            rightleft=(note.username === myusername) ? "goright" : "goleft";
+                            if (replyData.id) {
+                                replyHtml = `
+                                    <div class="replied-wrap" reply-id="${replyData.id}">
+                                        <div class="replied-who">${replyData.username === myusername ? "you" : replyData.username}</div>        
+                                        <div class="replied-message">${replyData.content}</div>
+                                    </div>`;
+    }
+                            let noteItem = $('<div>', {
+                                noteid: `${note.id}`,
+                                from:`${note.username===myusername?"you":note.username}`,
+                                class: `note-item ${mode}-list-item ${rightleft}`,
+                                html: `
+                                ${replyHtml}  <!-- This div will be added only if there is a reply -->
+                                <div class="note-title">${note.title}</div>
                                 <div class="note-content">${note.content}</div>
                                 <div class="messageStatus">
                                 <div class="note-timing" timing="${note.created_at}">${formatNoteTitle(note.created_at)}</div>
@@ -38,10 +53,10 @@ $(document).ready(function(){
                             });
                             if(note.username!=myusername)
                                 noteItem.css("border-color", "#a597ff");
-                            notesList.append(noteItem);
+                            notesList.prepend(noteItem);
                         });
                         
-                        notesList.scrollTop(notesList.prop("scrollHeight"));
+                        //notesList.scrollTop(notesList.prop("scrollHeight"));
                         resolve(data);
                     } else {
                         console.log("no list found");
@@ -71,25 +86,29 @@ $(document).ready(function(){
         submitButton.prop("disabled", true);
         let title = $("#title").val().trim();
         let content = $("#content").val().trim();
+        let reply_id = $(".reply-wrap").attr("reply-id");
+        let reply_content = $(".reply-wrap").find(".reply-message").text();
+        let reply_who = $(".reply-wrap").find(".reply-who").text();
+        cancelReply();
+        reply_id=reply_id === "00" ? null : reply_id;
         if (title === "" && content === "") return;
-        
-        securitycheck(title, content).then(result => {
+        securitycheck(title, content,reply_id,reply_content,reply_who).then(result => {
             if (!result) {
-                saveData(title, content, "normal").then(() => {
+                saveData(title, content, "normal",reply_id,reply_content,reply_who).then(() => {
                     submitButton.prop("disabled", false);
                 }).catch(error => console.error("Error saving data:", error));
             }
         });
     });
     
-    function saveData(title, content, mode) {
+    function saveData(title, content, mode,reply_id,reply_content,reply_who) {
         return new Promise((resolve, reject) => {
             let randomId = Math.floor(1000 + Math.random() * 9000);
             let noteItem;
             if(!secretSession&&mode=="secret")
-            noteItem = createElement("demo title", "This is a demo note", "00", randomId);
+            noteItem = createElement("demo title", "This is a demo note", "00", randomId,reply_id,reply_content,reply_who,mode);
             else
-            noteItem = createElement(title, content, "00", randomId);
+            noteItem = createElement(title, content, "00", randomId,reply_id,reply_content,reply_who,mode);
             let csrfToken = $("[name=csrfmiddlewaretoken]").val();
     
             $.ajax({
@@ -98,10 +117,10 @@ $(document).ready(function(){
                 headers: { "X-CSRFToken": csrfToken },
                 contentType: "application/json",
                 timeout: 10000,  // 10 seconds
-                data: JSON.stringify({ title: title, content: content, mode: mode }),
+                data: JSON.stringify({ title: title, content: content, mode: mode,reply_id:reply_id }),
                 success: function(data) {
                     if (data.success) {
-                        //noteItem.attr("href", `/edit-note/${data.noteid}`);
+                        noteItem.attr("noteid", `${data.noteid}`);
                         noteItem.find(".statusText").text("saved");
                         noteItem.css("border-color", "");
                         resolve(data);
@@ -137,16 +156,21 @@ $(document).ready(function(){
         let content = $(this).closest(".note-item").find(".note-content").text();
         let mode = $(this).closest(".note-item").find(".resend").attr("mode");
         let title = $(this).closest(".note-item").find(".note-title").text();
+        let reply_id = $(".replied-wrap").attr("reply-id");
+        let reply_content = $(".reply-wrap").find("replied-message").text();
+        let reply_who = $(".reply-wrap").find("replied-who").text();
         $(this).closest(".note-item").remove();
-        await saveData(title, content, mode);
+        //find reply id from message replied
+        
+        await saveData(title, content, mode,reply_id,reply_content,reply_who);
     });
-    $("#notesList").scrollTop($("#notesList").prop("scrollHeight"));
+    //$("#notesList").scrollTop($("#notesList").prop("scrollHeight"));
     
-    async function securitycheck(title, content) {
+    async function securitycheck(title, content,reply_id,reply_content,reply_who) {
         content=content.trim();
         if(secretSession){
             try {
-                await saveData("", content, "secret");
+                await saveData("", content, "secret",reply_id,reply_content,reply_who);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -176,7 +200,7 @@ $(document).ready(function(){
             if(content=="")
                 return false;
             try {
-                await saveData("", content, "secret");
+                await saveData("", content, "secret",reply_id,reply_content,reply_who);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -191,7 +215,7 @@ $(document).ready(function(){
                     await loadstaticmessage("secret");  // Wait for loading to complete
                     secretSession = true;              // Set to true only after loading
                 }
-                await saveData("", content, "secret");
+                await saveData("", content, "secret",reply_id,reply_content,reply_who);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -212,31 +236,58 @@ $(document).ready(function(){
             if(secretSession){
                 //createElement("",data.content,"00","00");
                 let notesList = $("#notesList");
-                let noteItem = $('<a>', {
-                //href: `/edit-note/${noteid}`,
-                class: "note-item",
-                html: `<div class="note-title"></div>
+                let  replyHtml = `
+                <div class="replied-wrap" reply-id="${data.reply_id}">
+                    <div class="replied-who">${data.reply_who}</div>        
+                    <div class="replied-message">${data.reply_content}</div>
+                </div>`;
+                
+                let noteItem = $('<div>', {
+                noteid: `${data.noteid}`,
+                from:`${data.username}`,
+                class: "note-item secret-list-item goleft",
+                html: `
+                ${replyHtml}
+                <div class="note-title"></div>
                 <div class="note-content">${data.content}</div>
                 <div class="messageStatus">
                 <div class="note-timing" timing="${new Date().toISOString()}">just now</div>
                 </div>
                 `
             }).css("border-color", "#a597ff");
-            notesList.append(noteItem);
-            notesList.animate({ scrollTop: notesList.prop("scrollHeight") }, "smooth");
+            notesList.prepend(noteItem);
+            if(isInViewport(noteItem)){
+                console.log("visible new message");
+            }else{
+                //this shows message button
+                $(".newMessageScroll").css("display", "flex").hide().slideDown(200);
+            }
+            //notesList.animate({ scrollTop: notesList.prop("scrollHeight") }, "smooth");
             }
         });
-    function createElement(title, content, noteid, tempid) {
-        
+    function createElement(title, content, noteid, tempid,reply_id,reply_content,reply_who,mode) {
         $("#title, #content").val("");
         $("#submitButton").prop("disabled", false);
-        
         let notesList = $("#notesList");
-        let noteItem = $('<a>', {
-            //href: `/edit-note/${noteid}`,
-            class: "note-item",
+        let  replyHtml ="";
+        if(reply_id!==null){
+          replyHtml = `
+                <div class="replied-wrap" reply-id="${reply_id}">
+                    <div class="replied-who">${reply_who}</div>        
+                    <div class="replied-message">${reply_content}</div>
+                </div>`;
+        }
+        let rightleft="";
+        if(mode==="secret")
+            rightleft="goright"
+        let noteItem = $('<div>', {
+            noteid: `${noteid}`,
+            from:"you",
+            class: `note-item ${mode}-list-item ${rightleft}`,
             id: tempid,
-            html: `<div class="note-title">${title}</div>
+            html: `
+            ${replyHtml}
+            <div class="note-title">${title}</div>
             <div class="note-content">${content}</div>
             <div class="messageStatus">
             <div class='statusText'>saving...</div>
@@ -245,8 +296,8 @@ $(document).ready(function(){
             `
         }).css("border-color", "#ffdd25");
         
-        notesList.append(noteItem);
-        notesList.animate({ scrollTop: notesList.prop("scrollHeight") }, "smooth");
+        notesList.prepend(noteItem);
+        scrollbottom();
         return noteItem;
     }
     function updateNoteTimings() {
@@ -294,6 +345,7 @@ $(document).ready(function(){
         $("#notesList").empty();
         loadstaticmessage("zero");
         $("#title, #content").val("");
+        cancelReply();
     }
     
     let timeout, timeout1;
@@ -309,12 +361,12 @@ $(document).ready(function(){
         clearTimeout(timeout1);
         progress.css({ transition: "none", width: "100%" });
         timeout1 = setTimeout(() => {
-            progress.css({ transition: "width 15s linear", width: "0%" });
+            progress.css({ transition: "width 150s linear", width: "0%" });
             timeout = setTimeout(() => {
                 console.log("time out");
                 onSecretSessionExpire();
                 secretSession = false;
-            }, 15000);
+            }, 150000);
         }, 50);
     }
     
