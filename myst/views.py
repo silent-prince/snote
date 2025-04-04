@@ -10,6 +10,10 @@ def add_note(request):
     return manageNotes.add_note(request)
 def update_note(request):
     return manageNotes.update_note(request)
+def get_missed_notes(request):
+    return manageNotes.get_missed_notes(request)
+def make_seen(request):
+    return manageNotes.make_seen(request)
 def notes_login(request):
     return manageLogin.notes_login(request)
 def choosewho(request):

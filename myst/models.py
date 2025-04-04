@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import localtime
+from django.utils import timezone
 # Create your models here.
 
 
@@ -17,6 +18,8 @@ class Note(models.Model):
     content = models.TextField()
     reply = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replies")
     created_at = models.DateTimeField(auto_now_add=True)
+    seen_at = models.DateTimeField(default=timezone.now)
+    isSeen = models.BooleanField(default=False)
 
     def __str__(self):
         return localtime(self.created_at).strftime("%Y-%m-%d %H:%M:%S")

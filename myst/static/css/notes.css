@@ -40,7 +40,7 @@ transition: margin-bottom 0.5s ease-in-out;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
-    border: 1.5px solid #25db00;
+    border: 1.5px solid #ffe863;
 }
 
 .note-item:hover {
