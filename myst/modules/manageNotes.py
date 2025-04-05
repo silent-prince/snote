@@ -104,38 +104,45 @@ def get_notes(request):
 def get_missed_notes(request):
     print("getting missed notes")
     user = request.user
-    try:
-        whois=request.session.get("whois")
-        notes = Note.objects.filter(
-            username=whois, mode="secret", whois=user.username, isSeen=False
-        ).order_by('seen_at')
-        updated_notes = list(notes.values_list("id", flat=True))  # Get list of IDs
-        receiver_channel = f'receiver-channel-{whois}'
-        pusher_client.trigger(receiver_channel, 'seen-by-me-event', {
-                    'noteids':updated_notes
-                })
-        notes_data = []
-        if notes.exists():
-            for note in notes:
-                notes_data.append({
-                    "id": note.id,
-                    "username": note.username,
-                    "whois": note.whois,
-                    "mode": note.mode,
-                    "isSeen": True,
-                    "title": note.title,
-                    "content": note.content,
-                    "reply_id": {
-                        "id": note.reply.id if note.reply else None,
-                        "username": note.reply.username if note.reply else "",
-                        "content": note.reply.content if note.reply else ""
-                    },
-                    "created_at": note.created_at.isoformat()
-                })
-            notes.update(isSeen=True, seen_at=timezone.now())
-        return JsonResponse({"success": True, "notes": notes_data}, status=200)
-    except Exception as e:
-        return JsonResponse({"success": False, "error": "unknown", "details": str(e)}, status=400)
+    if request.method == "POST":
+        try:
+            whois=request.session.get("whois")
+            data = json.loads(request.body)
+            note_ids = data.get("noteids", [])
+            seen_notes = Note.objects.filter(id__in=note_ids, isSeen=True)
+            seen_ids = list(seen_notes.values_list("id", flat=True))
+
+            notes = Note.objects.filter(
+                username=whois, mode="secret", whois=user.username, isSeen=False
+            ).order_by('seen_at')
+            updated_notes = list(notes.values_list("id", flat=True))  # Get list of IDs
+            receiver_channel = f'receiver-channel-{whois}'
+            pusher_client.trigger(receiver_channel, 'seen-by-me-event', {
+                        'noteids':updated_notes
+                    })
+            notes_data = []
+            if notes.exists():
+                for note in notes:
+                    notes_data.append({
+                        "id": note.id,
+                        "username": note.username,
+                        "whois": note.whois,
+                        "mode": note.mode,
+                        "isSeen": True,
+                        "title": note.title,
+                        "content": note.content,
+                        "reply_id": {
+                            "id": note.reply.id if note.reply else None,
+                            "username": note.reply.username if note.reply else "",
+                            "content": note.reply.content if note.reply else ""
+                        },
+                        "created_at": note.created_at.isoformat()
+                    })
+                notes.update(isSeen=True, seen_at=timezone.now())
+            return JsonResponse({"success": True, "notes": notes_data,"noteids":seen_ids}, status=200)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": "unknown", "details": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "no post"}, status=400)
 
 @login_required
 def update_note(request):

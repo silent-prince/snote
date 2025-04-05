@@ -66,10 +66,15 @@ function createElement(title, content, noteid, tempid,reply_id,reply_content,rep
             </div>`;
     }
     let rightleft="";
-    if(mode==="secret")
-        rightleft="goright"
+    let newOrOld="old";
+    if(mode==="secret"){
+        rightleft="goright";
+        newOrOld="new";
+
+    }
     let noteItem = $('<div>', {
         noteid: `${noteid}`,
+        newOrOld:`${newOrOld}`,
         from:"you",
         class: `note-item ${mode}-list-item ${rightleft}`,
         id: tempid,

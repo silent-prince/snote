@@ -137,11 +137,26 @@ $(document).ready(function(){
         console.log("Pusher connected. Time diff:", timeDiffInSec, "sec");
         //createElement("iniatiate", "connected", "00", "",null,"","","");
         if (timeDiffInSec > 2) {
+            let newNoteIds = $('[newOrOld="new"]').map(function () {
+                return $(this).attr('noteid');
+            }).get();
             console.log("Connection took longer — likely reconnected. Fetching missed messages...");
-            fetch(get_missed_notes)
+            fetch(get_missed_notes, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ noteids: newNoteIds })
+            })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("Missed messages:", data);
+                    console.log("Missed messages and data:", data);
+                    let noteIds = data.noteids || [];  
+                    noteIds.forEach(noteId => {
+                        let noteElement = $(`[noteid='${noteId}']`)
+                        if (noteElement) {
+                            noteElement.attr("newOrOld", "old");
+                            noteElement.css("border-color", "#66ed5a");
+                        }
+                    });
                     processlist(data,"secret","old");
                 }).catch(error => {
                     console.error("Error fetching missed messages:", error);
