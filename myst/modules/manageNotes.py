@@ -111,7 +111,8 @@ def get_missed_notes(request):
             note_ids = data.get("noteids", [])
             seen_notes = Note.objects.filter(id__in=note_ids, isSeen=True)
             seen_ids = list(seen_notes.values_list("id", flat=True))
-
+            #seen_notes.update(isSeen=True,seen_at=timezone.now());
+            print("on session resume checking ids",seen_ids)
             notes = Note.objects.filter(
                 username=whois, mode="secret", whois=user.username, isSeen=False
             ).order_by('seen_at')
@@ -139,7 +140,7 @@ def get_missed_notes(request):
                         "created_at": note.created_at.isoformat()
                     })
                 notes.update(isSeen=True, seen_at=timezone.now())
-            return JsonResponse({"success": True, "notes": notes_data,"noteids":seen_ids}, status=200)
+            return JsonResponse({"success": True, "notes": notes_data,"seen_ids":seen_ids}, status=200)
         except Exception as e:
             return JsonResponse({"success": False, "error": "unknown", "details": str(e)}, status=400)
     return JsonResponse({"success": False, "error": "no post"}, status=400)

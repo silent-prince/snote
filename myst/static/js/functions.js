@@ -37,7 +37,7 @@ function processlist(data,mode,addOrNew){
             </div>
             `
         });
-        console.log("id "+note.id+" isSeen "+note.isSeen);
+        //console.log("id "+note.id+" isSeen "+note.isSeen);
         if(note.isSeen){
             noteItem.css("border-color", "#66ed5a");
         }

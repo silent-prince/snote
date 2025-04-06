@@ -135,23 +135,24 @@ $(document).ready(function(){
         const now = Date.now();
         const timeDiffInSec = (now - startTime) / 1000;
         console.log("Pusher connected. Time diff:", timeDiffInSec, "sec");
-        //createElement("iniatiate", "connected", "00", "",null,"","","");
         if (timeDiffInSec > 2) {
             let newNoteIds = $('[newOrOld="new"]').map(function () {
                 return $(this).attr('noteid');
             }).get();
             console.log("Connection took longer — likely reconnected. Fetching missed messages...");
+            //let csrfToken = $("[name=csrfmiddlewaretoken]").val();
             fetch(get_missed_notes, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "X-CSRFToken": csrfToken },
+                contentType: "application/json",
                 body: JSON.stringify({ noteids: newNoteIds })
             })
                 .then(res => res.json())
                 .then(data => {
                     console.log("Missed messages and data:", data);
-                    let noteIds = data.noteids || [];  
-                    noteIds.forEach(noteId => {
-                        let noteElement = $(`[noteid='${noteId}']`)
+                    let seen_ids = data.seen_ids || [];  
+                    seen_ids.forEach(seen_id => {
+                        let noteElement = $(`[noteid='${seen_id}']`)
                         if (noteElement) {
                             noteElement.attr("newOrOld", "old");
                             noteElement.css("border-color", "#66ed5a");
@@ -173,7 +174,7 @@ $(document).ready(function(){
         // Listen for a single event with all data 
         receiverChannel.bind('seen-by-me-event', function(data) {
             let noteIds = data.noteids || [];  // Ensure we always have an array
-            console.log("Updated Notes:", noteIds);
+            //console.log("Updated Notes:", noteIds);
             noteIds.forEach(noteId => {
                 let noteElement = $(`[noteid='${noteId}']`)
                 if (noteElement) {
