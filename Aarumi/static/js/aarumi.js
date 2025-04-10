@@ -8,6 +8,7 @@ $(document).ready(function(){
 $("#send-message").click(function(){
     let message=$("#message-input").val().trim();
     if(message!==""){
+        $("#message-input").val("");
     let replyingmessage=$(".replying-message").text().trim();
     let replyingmessageid=$(".replying").attr("replying-aarumi-id");
     let aarumi_from=$(".replying-to").text();
@@ -79,6 +80,8 @@ pusher.connection.bind('connected', function() {
             let newAarumiList=data.newAarumiList || [];
             newAarumiList.forEach(aarumi => {
                 createReceivedElement(aarumi); //response for job 2
+                if(!inFocus)
+                receivedAarumiIds.add(data.aarumiId)//add id in list so when user1 resume screen send read status
             });
         });//dbops.js
     }
