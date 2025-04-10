@@ -4,11 +4,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
-def notes_login(request):
+def aarumi_login(request):
     
     if request.user.is_authenticated:
         #return post_login_check(request)  # If already logged in, go to dashboard
-        return redirect("notes_page")
+        return redirect("aarumi_home")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -22,30 +22,28 @@ def notes_login(request):
                 return redirect("choosewho")
             #user = User.objects.get(username='myst')
             # Store user id in session
-            request.session['whois'] = 'myst' #this is user name
-            request.session["receiver"]=User.objects.get(username="myst").id
-            return redirect("notes_page")
+            request.session['receiver'] = 'myst' #this is user name
+            return redirect("aarumi_home")
         else:
-            return render(request, 'notes_login.html', {'error': 'Invalid email or password'})
+            return render(request, 'aarumi_login.html', {'error': 'Invalid email or password'})
     
-    return render(request, 'notes_login.html')
+    return render(request, 'aarumi_login.html')
 
 def user_logout(request):
     request.session.flush()
     logout(request)
-    return redirect('notes_login') 
+    return redirect('aarumi_login') 
 @login_required
 def choosewho(request):
     selected_user = None
     print("insdie choose who ")
-    selected_user = request.session.get("whois")
+    selected_user = request.session.get("receiver")
     if request.method == "POST":
         print("insdie choose who post ")
-        whois = request.POST.get("whois")
-        if whois:
-            request.session["whois"] = whois  # Store user ID in session
-            request.session["receiver"]=User.objects.get(username=whois).id
+        receiver = request.POST.get("receiver")
+        if receiver:
+            request.session["receiver"] = receiver  # Store user ID in session
             #selected_user = User.objects.get(username=whois)  # Fetch user object
-            return redirect("notes_page")
+            return redirect("aarumi_home")
     non_staff_users = User.objects.filter(is_staff=False)  # Get all non-staff users
     return render(request, "choosewho.html", {"users": non_staff_users, "selected_user": selected_user})
