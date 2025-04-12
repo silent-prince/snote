@@ -30,9 +30,13 @@ function updateElement(temp_aarumi_id,savedData){
         messagestatus="failed";
     icon.attr('class', messagestatus);
 }
-function updateElementStatus(aarumiId,status){
-    console.log("made me seen or received "+aarumiId);
+function updateElementStatus(status){
+    if(status==="s_received")
+    $(".chat-message.sent .sent").attr('class', status);
+    else if(status==="read"){
+        $(".chat-message.sent .sent").attr('class', status);
+        $(".chat-message.sent.s_received").attr('class', status);
+    }
     if(status=="read")
-        $(`[aarumi-id="${aarumiId}"]`).attr("newOrOld","old");
-    $(`[aarumi-id="${aarumiId}"]`).find(".status i").attr('class', status);
+        $(".chat-message.sent").attr("newOrOld","old");
 }

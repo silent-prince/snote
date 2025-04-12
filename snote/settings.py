@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com','localhost']
 
 INSTALLED_APPS = [
     "myst",
+    "Aarumi",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

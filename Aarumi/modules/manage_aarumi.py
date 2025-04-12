@@ -3,8 +3,9 @@ from .my_imports import login_required, helper,pusher,db_ops_aarumi,json,Aarumi,
 @login_required
 def aarumi_home(request):
     #aarumis=Aarumi.objects.all()
-    seenAarumisIds,aarumis_list=db_ops_aarumi.makeAllReceivedSeen(request)
-    manage_pusher.makeAllSeen(request,seenAarumisIds)
+    aarumis_list=db_ops_aarumi.makeAllReceivedSeen(request)
+    if aarumis_list:
+        manage_pusher.makeAllSeen(request)
     aarumis=db_ops_aarumi.getAarumis(request)
     #print(aarumis)
     return render(request,'aarumi.html',{"aarumis":aarumis})
@@ -40,9 +41,11 @@ def getMissedData(request):
             #the message u sent(get ids from ui) check in db if those are seen by other person if yes send update in ajax for blue tick on my screen
             #get missed messages from db send in ajax for your screen and send pusher for next person to do blue tick
             sentSeenIds,seen_or_received=db_ops_aarumi.checkNewIdsIfSeen(request)
-            myNewMessageSeenIds,newAarumiList=db_ops_aarumi.makeAllReceivedSeen(request)#send to next user
-            serializedArrumis=helper.aarumiSerializer(newAarumiList)
-            response=manage_pusher.makeAllSeen(request,myNewMessageSeenIds)
+            newAarumiList=db_ops_aarumi.makeAllReceivedSeen(request)#send to next user
+            serializedArrumis=None
+            if newAarumiList:
+                serializedArrumis=helper.aarumiSerializer(newAarumiList)
+                response=manage_pusher.makeAllSeen(request)
             return JsonResponse({"success": True,"sentSeenIds":sentSeenIds,"seen_or_received":seen_or_received,"newAarumiList":serializedArrumis},status=200)
         except json.JSONDecodeError as e:
             return JsonResponse({"success": False, "error": "Invalid JSON", "details": str(e)}, status=400)

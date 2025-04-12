@@ -36,21 +36,17 @@ def send_push_message(aarumi: Aarumi):
 
     return response
 def makeSingleSeen(request):#it was single but now bulk
-    data = json.loads(request.body)
-    aarumi_ids = data.get("aarumiIds",[])
-    return makeAllSeen(request,aarumi_ids)
-def makeAllSeen(request,seenAarumisIds):
+    return makeAllSeen(request)
+def makeAllSeen(request):
     response = None
-    if seenAarumisIds:
-        is_seen_or_is_received = "is_seen"
-        if request.body:
-            data = json.loads(request.body)
-            is_seen_or_is_received = data.get("is_seen_or_is_received", "is_seen")
-        rtatus = "read" if is_seen_or_is_received == "is_seen" else "s_received"
-        receiver_id = request.session.get("receiver")
-        receiver_channel = f'receiver-channel-{receiver_id}'
-        response = pusher_client.trigger(receiver_channel, 'all-seen-event', {
-            'aarumiIds': seenAarumisIds,
-            'is_seen_or_is_received':rtatus
-        })
+    is_seen_or_is_received = "is_seen"
+    if request.body:
+        data = json.loads(request.body)
+        is_seen_or_is_received = data.get("is_seen_or_is_received", "is_seen")
+    rtatus = "read" if is_seen_or_is_received == "is_seen" else "s_received"
+    receiver_id = request.session.get("receiver")
+    receiver_channel = f'receiver-channel-{receiver_id}'
+    response = pusher_client.trigger(receiver_channel, 'all-seen-event', {
+        'is_seen_or_is_received':rtatus
+    })
     return response

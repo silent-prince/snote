@@ -163,6 +163,7 @@
 }
 .message-wrap {
   display: flex;
+  align-items: flex-end;
 }
 .replying-cancel {
   margin-right: 20px;

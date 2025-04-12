@@ -47,10 +47,9 @@ def makeAllReceivedSeen(request):
     else:
         is_seen_or_is_received = "is_seen"
     unseen_aarumis = Aarumi.objects.filter(receiver=request.user, sender_id=request.session.get("receiver"), is_seen=False)
-    ids_to_send = list(unseen_aarumis.values_list('id', flat=True))
     aarumis_list = list(unseen_aarumis)
     unseen_aarumis.update(**{is_seen_or_is_received: True})
-    return ids_to_send,aarumis_list
+    return aarumis_list
 @login_required
 def checkNewIdsIfSeen(request):
     data=json.loads(request.body)

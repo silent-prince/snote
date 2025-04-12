@@ -44,11 +44,9 @@ receiverChannel.bind('new-aarumi-event', function(data) {//new message received
 
 receiverChannel.bind('all-seen-event', function(data) { // user2 sends update either he seen message or received message
     console.log("all-seen-event dsta "+data);
-    let aarumiIds=data.aarumiIds || [];
     let seenOrReceived=data.is_seen_or_is_received;
-    aarumiIds.forEach(id => {
-        updateElementStatus(id,seenOrReceived);// update user1 screen accordingly
-    });
+    updateElementStatus(seenOrReceived);// update user1 screen accordingly
+
 });
 
 pusher.connection.bind('connected', function() {
@@ -72,11 +70,8 @@ pusher.connection.bind('connected', function() {
         console.log("after reconnect "+newArrumiIds+" seenOrReceived "+seenOrReceived);
         getMissedData(newArrumiIds,seenOrReceived).then(data=>{//this ids are for job1 and seenOrReceived for job 3
             console.log("got missed data");
-            let aarumiIds=data.sentSeenIds || [];
             let seenOrReceived=data.is_seen_or_is_received;
-            aarumiIds.forEach(id => {
-                updateElementStatus(id,seenOrReceived);// response for job 1
-            });
+            updateElementStatus(seenOrReceived);// response for job 1
             let newAarumiList=data.newAarumiList || [];
             newAarumiList.forEach(aarumi => {
                 createReceivedElement(aarumi); //response for job 2
