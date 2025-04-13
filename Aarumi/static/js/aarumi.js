@@ -13,10 +13,10 @@ $("#send-message").click(function(){
     let replyingmessageid=$(".replying").attr("replying-aarumi-id");
     let aarumi_from=$(".replying-to").text();
     console.log("saving message "+message+" replyingmessage "+replyingmessage+" replyingmessageid "+replyingmessageid);
-    let temp_aarumi_id=createSentElement(message,replyingmessage,aarumi_from);
+    let temp_aarumi_id=createSentElement(message,replyingmessage,aarumi_from,replyingmessageid);
     savemessage(message, replyingmessageid).then(savedData => {
         console.log("temp_aarumi_id", temp_aarumi_id);
-        updateElement(temp_aarumi_id, savedData);
+        updateElement(temp_aarumi_id, savedData);// its set only sent after seen or recevied it sets later by pusher
     });
     }
 });
@@ -41,9 +41,30 @@ receiverChannel.bind('new-aarumi-event', function(data) {//new message received
         }
         createReceivedElement(data);//created received element
 });
+receiverChannel.bind('new-aarumi-event2', function(data) {//new message received
+    console.log("received event2 "+data.failedMessages);
+    let failedMessages = data.failedMessages;
+    let newArrumiIds = [];
+    for(let failedMessage of failedMessages){
+        let arrumiId = failedMessage.id;
+        let message = failedMessage.message;
+        let replyId = failedMessage.replyId;
+        newArrumiIds.push(arrumiId);
+        console.log("offline message to user2 arrumiId "+arrumiId+" message "+message+" replyId "+replyId);
+        createReceivedElement2(failedMessage);
+        if (!inFocus){
+            receivedAarumiIds.add(arrumiId)
+        }
+    }
+    if (inFocus){
+        seenByMe(newArrumiIds,"is_seen");//if user1 is on current screen send status seen
+    }else{
+        seenByMe(newArrumiIds,"is_received");//if user1 is not on current screen send status received
+    }
+});
 
 receiverChannel.bind('all-seen-event', function(data) { // user2 sends update either he seen message or received message
-    console.log("all-seen-event dsta "+data);
+    console.log("all-seen-event is_seen_or_is_received  "+data.is_seen_or_is_received);
     let seenOrReceived=data.is_seen_or_is_received;
     updateElementStatus(seenOrReceived);// update user1 screen accordingly
 
@@ -70,6 +91,7 @@ pusher.connection.bind('connected', function() {
         console.log("after reconnect "+newArrumiIds+" seenOrReceived "+seenOrReceived);
         getMissedData(newArrumiIds,seenOrReceived).then(data=>{//this ids are for job1 and seenOrReceived for job 3
             console.log("got missed data");
+            
             let seenOrReceived=data.is_seen_or_is_received;
             updateElementStatus(seenOrReceived);// response for job 1
             let newAarumiList=data.newAarumiList || [];
@@ -96,12 +118,26 @@ document.addEventListener("visibilitychange", function () {
             let idsArray = Array.from(receivedAarumiIds);
             console.log("got some ids"+idsArray);
             seenByMe(idsArray,"is_seen").then(res=>{// as focus resume sends user 2 response that messages are read
+                console.log("---------seenByMe response "+res);
                 if(res)
                     receivedAarumiIds.clear();
             });
             
         }
     }
+});
+
+window.addEventListener("online", function () {
+    console.log("Internet is back! Retrying fetch...");
+    
+    retryFailedMessages().then(data=>{
+        let failedtoSuccessIdsPair=data.failedtoSuccessIdsPair;//this is for job 1 
+            console.log(" deltelog 2 failed messages back as failedtoSuccessIdsPair "+failedtoSuccessIdsPair);   
+            for(let tempid in failedtoSuccessIdsPair){
+                let actualId = failedtoSuccessIdsPair[tempid];
+                updateOfflineElement(tempid, actualId);// its set only sent after seen or recevied it sets later by pusher
+            }
+    }); // Call your retry function here
 });
 
 });

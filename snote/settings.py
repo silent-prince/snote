@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-(nynq-2x7wpsiqp=98+$%0n^il)lj9z!f&ck2c2ic^88qhw7vm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com','localhost']
+ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com','localhost','127.0.0.1']
 
 
 # Application definition

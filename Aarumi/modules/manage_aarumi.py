@@ -50,3 +50,16 @@ def getMissedData(request):
         except json.JSONDecodeError as e:
             return JsonResponse({"success": False, "error": "Invalid JSON", "details": str(e)}, status=400)
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+@login_required
+def retry_failed_messages(request):
+    if request.method == "POST":
+        try:
+            # Retry sending failed messages
+            failedtoSuccessIdsPair,failedMessages=db_ops_aarumi.save_aarumi2(request)##save the missed messages in db
+            if failedtoSuccessIdsPair:
+                print("deletelog arrumi failedtoSuccessIdsPair",failedtoSuccessIdsPair)
+                manage_pusher.send_push_message2(request,failedMessages)
+            return JsonResponse({"success": True,"failedtoSuccessIdsPair":failedtoSuccessIdsPair}, status=200)
+        except json.JSONDecodeError as e:
+            return JsonResponse({"success": False, "error": "Invalid JSON", "details": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)

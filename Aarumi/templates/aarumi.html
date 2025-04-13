@@ -68,7 +68,8 @@
         
         let csrfToken = $("[name=csrfmiddlewaretoken]").val();
         let add_aarumi = "{% url 'add_aarumi' %}";
-        let get_missed_data= "{% url 'getMissedData' %}"
+        let get_missed_data= "{% url 'getMissedData' %}";
+        let retry_failed_messages = "{% url 'retry_failed_messages' %}";
         let make_seen_by_me ="{% url 'seenByMe' %}"
         let myUsername = "{{ request.user.username }}";
         let myUserid = "{{ request.user.id }}";

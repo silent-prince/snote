@@ -10,4 +10,6 @@ def seenByMe(request):
     return manage_aarumi.seenByMe(request)
 def getMissedData(request):
     return manage_aarumi.getMissedData(request)
+def retry_failed_messages(request):
+    return manage_aarumi.retry_failed_messages(request)
 

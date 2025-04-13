@@ -10,6 +10,33 @@ def save_aarumi(request):
     message_body = data.get("message"))
     return aarumi
 @login_required
+def save_aarumi2(request):
+    data = json.loads(request.body)
+    failedMessages = data.get("failedMessages", [])
+    response_pairs = {}
+    # Process each message
+    print("deletelog arrumi save2failedMessages",failedMessages)
+    for msg in failedMessages:
+        print("deletelog msg",msg)  
+        temp_id = msg.get("id")
+        message = msg.get("message")
+        reply_id = msg.get("replyId")
+        if reply_id in [None, "undefined", "", "null"]:
+            reply_id = None
+        aarumi = Aarumi.objects.create(
+        sender = request.user,
+        receiver_id=request.session.get("receiver"),
+        aarumi_reply_id=reply_id,
+        message_body = message)
+        msg["id"] = aarumi.id  # Update the ID in the message
+        if aarumi.aarumi_reply:
+            msg["replyMessage"]=aarumi.aarumi_reply.message_body
+            msg["replyFrom"]="you"
+            if aarumi.aarumi_reply.sender_id != aarumi.sender_id:
+                msg["replyFrom"] = aarumi.aarumi_reply.sender.username
+        response_pairs[temp_id] = aarumi.id
+    return response_pairs,failedMessages
+@login_required
 def getAarumis(request):
     receiver_id = request.session.get("receiver")
     sender = request.user

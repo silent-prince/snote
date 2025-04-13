@@ -39,13 +39,37 @@ function seenByMe(aarumiIds,is_seen_or_is_received){
         return false;
     });
 }
-
+function retryFailedMessages(){
+    let failedMessages = $('[newOrOld="offline"]').map(function () {
+        return {
+            id: $(this).attr('aarumi-id'),
+            message: $(this).find('.message-body').text().trim(),
+            replyId: $(this).attr('aarumi-reply-id')
+        };
+    }).get();
+    console.log(" deltelog failed messages "+failedMessages);
+    return fetch(retry_failed_messages,{
+        method:"POST",
+        headers:{"X-CSRFToken":csrfToken},
+        contentType:"Application/json",
+        body:JSON.stringify({"failedMessages":failedMessages})
+    }).then(res=>res.json()).then(data=>{
+        console.log("retry failed messages "+data.success)
+        return data;
+    }).catch(error=>{
+        console.log(error);
+        return false;
+    });
+}
 function getMissedData(newArrumiIds,is_seen_or_is_received){
     return fetch(get_missed_data,{
         method:"POST",
         headers:{"X-CSRFToken":csrfToken},
         contentType:"Application/json",
-        body:JSON.stringify({"newArrumiIds":newArrumiIds,"is_seen_or_is_received":is_seen_or_is_received})
+        body:JSON.stringify({
+            "newArrumiIds":newArrumiIds,
+            "is_seen_or_is_received":is_seen_or_is_received
+        })
     }).then(res=>res.json()).then(data=>{
         return data
     }).catch(error=>{

@@ -8,7 +8,13 @@ pusher_client = pusher.Pusher(
   cluster='ap2',
   ssl=True
 )
-
+def send_push_message2(request,failedMessages):
+    print("deletelog arrumi send_push_message2",failedMessages)
+    receiver_id = request.session.get("receiver")
+    receiver_channel = f'receiver-channel-{receiver_id}'
+    response = pusher_client.trigger(receiver_channel, 'new-aarumi-event2', {
+        'failedMessages':failedMessages
+    })
 
 def send_push_message(aarumi: Aarumi):
     # Handle reply info
