@@ -1,0 +1,80 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' type='text/css' media='screen' href="{% static 'css/aarumi.css' %}" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+    
+    <script src="{% static 'js/helper.js' %}"></script>
+    <script src="{% static 'js/dragger.js' %}"></script>
+    <script src="{% static 'js/test.js' %}"></script>
+    <script src="{% static 'js/elements.js' %}"></script>
+    <script src="{% static 'js/dbops.js' %}" ></script>
+    <script src="{% static 'js/aarumi.js' %}" ></script>
+    <script src="{% static 'js/touchhold.js' %}" ></script>
+    
+    <title>Aarumi</title>
+
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chat Arrumi</div>
+        <div class="chat-body" id="chat-body">
+        {% for aarumi in aarumis %}
+        {% if aarumi.sender == request.user %}
+        <div aaurmi-from="you" aarumi-id="{{aarumi.id}}" class="chat-message sent">
+            {% if aarumi.aarumi_reply %}
+            <div class="reply">{{aarumi.aarumi_reply.message_body}}</div>
+            {% endif %}
+            <div class="message-body">{{aarumi.message_body}}</div>
+            <div class="meta-info">
+                <div class="timestamp" seen-sent="{{aarumi.created_at|date:'c' }}">{{ aarumi.created_at|date:'c'  }}</div>
+                <div class="status"><i class="{% if aarumi.is_seen %}read{% elif aarumi.is_received  %} s_received {% else %} sent {% endif %}"></i></div>
+            </div>
+        </div>
+        {% else %}
+        <div aaurmi-from="{{aarumi.aarumi_reply.username}}" aarumi-id="{{aarumi.id}}" class="chat-message received">
+            {% if aarumi.aarumi_reply %}
+            <div class="reply">{{aarumi.aarumi_reply.message_body}}</div>
+            {% endif %}
+            <div class="message-body">{{aarumi.message_body}}</div>
+            <div class="meta-info">
+                <div class="timestamp" seen-sent="{{aarumi.seen_at|date:'c' }}">{{ aarumi.created_at|date:'c' }}</div>
+                <div class="status"><i class="no_status"></i></div>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <p style="text-align: center; color: #6b7280;">No aarumi found.</p>
+        {% endfor %}
+        </div>
+        <div class="chat-input">
+            <div class="replying">
+                <div class="replying-head"><div class="replying-to"></div>
+                <div class="replying-cancel">x</div></div>
+                <div class="replying-message"></div>
+            </div>
+            <div class="message-wrap">
+                <textarea id="message-input" placeholder="Type your message..."></textarea>
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <script>
+        
+        let csrfToken = $("[name=csrfmiddlewaretoken]").val();
+        let add_aarumi = "{% url 'add_aarumi' %}";
+        let get_missed_data= "{% url 'getMissedData' %}";
+        let retry_failed_messages = "{% url 'retry_failed_messages' %}";
+        let make_seen_by_me ="{% url 'seenByMe' %}"
+        let myUsername = "{{ request.user.username }}";
+        let myUserid = "{{ request.user.id }}";
+    </script>
+    
+</body>
+</html>

@@ -14,6 +14,8 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+USE_TZ = True
+TIME_ZONE = 'Asia/Kolkata'  # or your local zone
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,7 +34,7 @@ ALLOWED_HOSTS = ['sparkshadow.pythonanywhere.com','localhost','127.0.0.1']
 
 INSTALLED_APPS = [
     "myst",
-    "Aarumi",
+    "raya",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
