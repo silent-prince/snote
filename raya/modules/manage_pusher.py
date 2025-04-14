@@ -20,12 +20,13 @@ def send_push_message(aarumi: Aarumi):
     # Handle reply info
     replyFrom = ""
     replyMessage = ""
-
+    replyId = None
     if aarumi.aarumi_reply:
         replyMessage = aarumi.aarumi_reply.message_body
         replyFrom="you"
         if aarumi.aarumi_reply.sender_id != aarumi.sender_id:
             replyFrom = aarumi.aarumi_reply.sender.username
+        replyId = aarumi.aarumi_reply.id
 
     # Construct channel name
     receiver_channel = f'receiver-channel-{aarumi.receiver_id}'
@@ -35,6 +36,7 @@ def send_push_message(aarumi: Aarumi):
         'username': aarumi.sender.username,
         'message': aarumi.message_body,
         'id': aarumi.id,
+        'replyId': replyId,
         'replyFrom': replyFrom,
         'replyMessage': replyMessage,
         'created_at': aarumi.created_at.isoformat()

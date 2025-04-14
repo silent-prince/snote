@@ -141,16 +141,13 @@ window.addEventListener("online", function () {
         retrySendingMessage(failedMessage);
     }
     else{
-        console.log("no failed messages to send");
+        //console.log("no failed messages to send");
     }
     
 });
 setInterval(() => {
     let failedMessage=getFailedMessages();
-    console.log("failedMessage l "+failedMessage.length);
-    console.log("failedMessage "+failedMessage);
     if (navigator.onLine && failedMessage.length > 0) {
-        console.log("Online and unsent messages exist. Retrying...");
         retrySendingMessage(failedMessage);
     }
 }, 10000); // 10 seconds
@@ -158,7 +155,6 @@ function retrySendingMessage(failedMessage){
     console.log("retrySendingMessage called");
     retryFailedMessages(failedMessage).then(data=>{
         let failedtoSuccessIdsPair=data.failedtoSuccessIdsPair;//this is for job 1 
-            console.log(" deltelog 2 failed messages back as failedtoSuccessIdsPair "+failedtoSuccessIdsPair);   
             for(let tempid in failedtoSuccessIdsPair){
                 let actualId = failedtoSuccessIdsPair[tempid];
                 updateOfflineElement(tempid, actualId);// its set only sent after seen or recevied it sets later by pusher

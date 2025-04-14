@@ -26,7 +26,7 @@
         <div class="chat-body" id="chat-body">
         {% for aarumi in aarumis %}
         {% if aarumi.sender == request.user %}
-        <div aaurmi-from="you" aarumi-id="{{aarumi.id}}" class="chat-message sent">
+        <div aaurmi-from="you" aarumi-id="{{aarumi.id}}" aarumi-reply-id="{{aarumi.aarumi_reply.id}}" class="chat-message sent">
             {% if aarumi.aarumi_reply %}
             <div class="reply">{{aarumi.aarumi_reply.message_body}}</div>
             {% endif %}
@@ -37,7 +37,7 @@
             </div>
         </div>
         {% else %}
-        <div aaurmi-from="{{aarumi.aarumi_reply.username}}" aarumi-id="{{aarumi.id}}" class="chat-message received">
+        <div aaurmi-from="{{aarumi.aarumi_reply.username}}" aarumi-id="{{aarumi.id}}" aarumi-reply-id="{{aarumi.aarumi_reply.id}}" class="chat-message received">
             {% if aarumi.aarumi_reply %}
             <div class="reply">{{aarumi.aarumi_reply.message_body}}</div>
             {% endif %}

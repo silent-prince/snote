@@ -32,6 +32,7 @@ def save_aarumi2(request):
         if aarumi.aarumi_reply:
             msg["replyMessage"]=aarumi.aarumi_reply.message_body
             msg["replyFrom"]="you"
+            msg["replyId"]=reply_id
             msg["created_at"]=aarumi.created_at.isoformat()
             if aarumi.aarumi_reply.sender_id != aarumi.sender_id:
                 msg["replyFrom"] = aarumi.aarumi_reply.sender.username

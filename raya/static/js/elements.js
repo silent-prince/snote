@@ -21,7 +21,7 @@ return aarumiId;
 }
 function createReceivedElement(data){
     let now=new Date();
-    createElement(data.id,data.message,data.replyMessage,data.replyFrom,"received","no_status","old","00",now);
+    createElement(data.id,data.message,data.replyMessage,data.replyFrom,"received","no_status","old",data.replyId,now);
 }
 function updateElement(temp_aarumi_id,savedData){
     let messagestatus="sending";

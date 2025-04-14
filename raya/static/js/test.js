@@ -14,19 +14,23 @@ function minorVibrate() {
    
 
 //for scroll to replied element
-$("#notesList").on('click','.replied-wrap',function(){
-    let replyid=$(this).attr('reply-id');
+$("#chat-body").on('click','.chat-message .reply',function(){
+    console.log("clicked on message");
+    let replyid=$(this).parent().attr('aarumi-reply-id');
     console.log("replyid "+replyid);
-    let ele = $(`[noteid='${replyid}']`);
+    if(!(replyid === undefined || replyid === null || replyid === "" || isNaN(Number(replyid)))) {
+        console.log("replyid is valid "+replyid);
+    let ele = $(`[aarumi-id='${replyid}']`);
     scrollToElement(ele);
-    blinkBorder(ele, 3, 500);
+    blinkBorder(ele, "#ee9b9b");
+}
 });
 function scrollToElement(targetElement) {
     
     //var targetElement = $('#' + targetId);
 
     if (targetElement.length) {
-        var container = $('#notesList');
+        var container = $('#chat-body');
 
         // Scroll so that the target element comes to the center
         var containerHeight = container.height();
@@ -42,16 +46,21 @@ function scrollToElement(targetElement) {
     }
 }
 
-function blinkBorder(element, times, interval) {
-    let count = 0;
-    let originalColor = element.css("border-color"); // Store the default border color
-    
-    let blinkInterval = setInterval(() => {
-        element.css("border-color", count % 2 === 0 ? "yellow" : originalColor); // Toggle between red and default
-        count++;
-        if (count >= times * 2) clearInterval(blinkInterval); // Stop after 3 blinks
-    }, interval);
+function blinkBorder(element, color, fadeDuration = 3000) {
+    let originalColor = element.css("background-color");
+    element.css("background-color", color);
+
+    setTimeout(() => {
+        element.css("transition", `background-color ${fadeDuration}ms`);
+        element.css("background-color", originalColor);
+
+        // Optionally remove the transition after it's done
+        setTimeout(() => {
+            element.css("transition", "");
+        }, fadeDuration);
+    }, 2000);
 }
+
 
 $(".newMessageScroll").click(function(){
     scrollbottom();
