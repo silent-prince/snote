@@ -75,11 +75,16 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
+        {% if error %}
+            <div class="error-message">
+            {{ error }}
+            </div>
+        {% endif %}
         {% if messages %}
             {% for message in messages %}
-                <div class="{{ message.tags }}-message">
-                    {{ message }}
-                </div>
+            <div class="{{ message.tags }}-message">
+                {{ message }}
+            </div>
             {% endfor %}
         {% endif %}
         <form method="post">

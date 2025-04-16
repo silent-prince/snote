@@ -83,15 +83,18 @@ def makeAllReceivedSeen(request):
         is_seen_or_is_received = data.get("is_seen_or_is_received", "is_seen")
     else:
         is_seen_or_is_received = "is_seen"
-
-    update_fields = {is_seen_or_is_received: True}
-    if is_seen_or_is_received == "is_seen":
-        update_fields["seen_at"] = timezone.now()
-    elif is_seen_or_is_received == "is_received":
-        update_fields["received_at"] = timezone.now()
     unseen_aarumis = Aarumi.objects.filter(receiver=request.user, sender_id=request.session.get("receiver"), is_seen=False)
     aarumis_list = list(unseen_aarumis)
-    unseen_aarumis.update(**update_fields)
+    for obj in unseen_aarumis:
+        if is_seen_or_is_received == "is_seen":
+            obj.is_seen = True
+            obj.seen_at = timezone.now()
+            obj.save(update_fields=['is_seen', 'seen_at'])
+        elif is_seen_or_is_received == "is_received":
+            obj.is_received = True
+            obj.received_at = timezone.now()
+            obj.save(update_fields=['is_received', 'received_at'])
+    #unseen_aarumis.update(**update_fields)
     return aarumis_list
 @login_required
 def checkNewIdsIfSeen(request):

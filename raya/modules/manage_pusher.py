@@ -11,7 +11,7 @@ pusher_client = pusher.Pusher(
 def send_push_message2(request,failedMessages):
     print("deletelog arrumi send_push_message2",failedMessages)
     receiver_id = request.session.get("receiver")
-    receiver_channel = f'receiver-channel-{receiver_id}'
+    receiver_channel = f'receiver-channel-{receiver_id}-{request.user.id}'
     response = pusher_client.trigger(receiver_channel, 'new-aarumi-event2', {
         'failedMessages':failedMessages
     })
@@ -29,7 +29,7 @@ def send_push_message(aarumi: Aarumi):
         replyId = aarumi.aarumi_reply.id
 
     # Construct channel name
-    receiver_channel = f'receiver-channel-{aarumi.receiver_id}'
+    receiver_channel = f'receiver-channel-{aarumi.receiver_id}-{aarumi.sender_id}'
 
     # Send message via pusher
     response = pusher_client.trigger(receiver_channel, 'new-aarumi-event', {
@@ -53,7 +53,7 @@ def makeAllSeen(request):
         is_seen_or_is_received = data.get("is_seen_or_is_received", "is_seen")
     rtatus = "read" if is_seen_or_is_received == "is_seen" else "s_received"
     receiver_id = request.session.get("receiver")
-    receiver_channel = f'receiver-channel-{receiver_id}'
+    receiver_channel = f'receiver-channel-{receiver_id}-{request.user.id}'
     response = pusher_client.trigger(receiver_channel, 'all-seen-event', {
         'is_seen_or_is_received':rtatus
     })
@@ -61,7 +61,7 @@ def makeAllSeen(request):
 def notify_typing_status(request):
     try:
         receiver_id = request.session.get("receiver")
-        receiver_channel = f'receiver-channel-{receiver_id}'
+        receiver_channel = f'receiver-channel-{receiver_id}-{request.user.id}'
         response = pusher_client.trigger(receiver_channel, 'user-typing-event', {
             'typing': True
         })

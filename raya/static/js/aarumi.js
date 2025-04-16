@@ -4,7 +4,7 @@ $(document).ready(function(){
     var pusher = new Pusher('3d2b17bf76b92c8f20cd', {
         cluster: 'ap2'
       });
-    const receiverChannel = pusher.subscribe(`receiver-channel-${myUserid}`);
+    const receiverChannel = pusher.subscribe(`receiver-channel-${myUserid}-${receiverId}`);
 $("#send-message").click(function(){
     let message=$("#message-input").val().trim();
     if(message!==""){
@@ -166,4 +166,18 @@ function retrySendingMessage(failedMessage){
 }
 updateTimings();
 setInterval(updateTimings, 50000);
+
+$('#openBtn').on('click', function () {
+    $('#mySidenav-wrap').fadeIn();
+      $('#mySidenav').css('width', '40%');
+    });
+
+    // Close on clicking overlay or close button
+    $('#mySidenav-wrap').on('click', function (e) {
+      if ($(e.target).is('#mySidenav-wrap') || $(e.target).hasClass('closebtn')) {
+        $('#mySidenav').css('width', '0');
+        $('#mySidenav-wrap').fadeOut();
+      }
+    });
+
 });

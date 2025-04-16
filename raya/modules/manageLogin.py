@@ -21,12 +21,14 @@ def aarumi_login(request):
             return render(request, 'aarumi_login.html', {'error': 'Invalid username or password'})
     return render(request, 'aarumi_login.html')
 
-def user_logout(request):
+def raya_logout(request):
     request.session.flush()
     logout(request)
     return redirect('aarumi_login') 
 @login_required
 def user_list(request):
+    if request.user.is_staff == False:
+        return redirect("aarumi_home")
     selected_user = None
     print("insdie choose who ")
     selected_user = request.session.get("receiver")
@@ -36,5 +38,5 @@ def user_list(request):
         if receiver:
             request.session["receiver"] = receiver  # Store user ID in session
             return redirect("aarumi_home")
-    non_staff_users = User.objects.filter(is_staff=False)  # Get all non-staff users
-    return render(request, "user_list.html", {"users": non_staff_users, "selected_user": selected_user})
+    all_users = User.objects.exclude(id=request.user.id)  # Exclude the current user
+    return render(request, "user_list.html", {"users": all_users, "selected_user": selected_user})

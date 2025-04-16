@@ -41,6 +41,10 @@
         .user-item:hover {
             background-color: #f0f0f0;
         }
+        .user-item.selected {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
         .user-item span {
             flex: 1;
             text-align: left;
@@ -63,7 +67,7 @@
             {% csrf_token %}
             <div class="user-list">
                 {% for user in users %}
-                <div data-user-id="{{ user.id }}" class="user-item">
+                <div data-user-id="{{ user.id }}" class="user-item {% if user.id == selected_user %}selected{% endif %}">
                     <span>{{ user.id }}</span>
                     <span>{{ user.username }}</span>
                     <span>{{ user.email }}</span>

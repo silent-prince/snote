@@ -2,7 +2,7 @@
     --bg-gradient-start: #eef2f3;
     --bg-gradient-end: #8e9eab;
     --chat-bg: #ffffff;
-    --chat-header-bg: #3F51B5;
+    --chat-header-bg: #4a90e2;
     --chat-header-color: #ffffff;
     --chat-body-bg: #f5f7fa;
     --sent-bg: #4FC3F7;
@@ -19,6 +19,7 @@
     --input-border: #ccc;
     --input-button-bg: #3F51B5;
     --input-button-hover: #303F9F;
+    --sidenav-bg:#4a90e2;
   }
 
   body {
@@ -41,7 +42,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #4a90e2; /* soft blue background */
+    background-color: var(--chat-header-bg); /* soft blue background */
     padding: 10px 20px;
     color: white;
     font-family: 'Segoe UI', sans-serif;
@@ -70,8 +71,8 @@
 }
 
 .header-logout a:hover {
-    background-color: #e1ecf7;
-    color: #2a6db8;
+    background-color: #e1ecf7 !important;
+    color: #2a6db8 !important;
 }
   .chat-body {
     display: flex;
@@ -236,4 +237,51 @@
     transform: scale(1.8);
     opacity: 1;
   }
+}
+
+.sidenav {
+  font-family: "Lato", sans-serif;
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: var(--sidenav-bg);
+    overflow-x: hidden;
+    transition: width 0.5s ease;
+    z-index: 2;
+  }
+
+  .sidenav a {
+    padding: 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+
+  .closebtn {
+    display: flex !important;
+  justify-content: right;
+  font-size: 36px !important;
+  }
+
+  #mySidenav-wrap {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #00000024;
+    z-index: 1;
+    display: none;
+  }
+  .header-logout a {
+    color: var(--chat-header-bg);
+    margin: 23px 61px;
 }

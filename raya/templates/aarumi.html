@@ -26,7 +26,7 @@
         <div class="chat-header">
             <div class="header-title">Aarumi</div>
             <div class="header-user"> {{ receiver_username }}</div>
-            <div class="header-logout"><a href="{% url 'user_logout' %}">Logout</a></div>
+            <span style="font-size:30px;cursor:pointer" id="openBtn">&#9776; </span>
         </div>
         <div class="chat-body" id="chat-body">
         {% for aarumi in aarumis %}
@@ -70,8 +70,19 @@
         </div>
     </div>
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    
+    <div id="mySidenav-wrap">
+        <!-- Side Navigation -->
+        <div id="mySidenav" class="sidenav">
+          <a href="javascript:void(0)" class="closebtn">&times;</a>
+          <a href="#">About</a>
+          {% if request.user.is_staff %}
+          <a href="{% url 'user_list' %}">Users</a>
+          {% endif %}
+          <div class="header-logout"><a href="{% url 'raya_logout' %}">Logout</a></div>
+        </div>
+      </div>
     <script>
-        
         let csrfToken = $("[name=csrfmiddlewaretoken]").val();
         let add_aarumi = "{% url 'add_aarumi' %}";
         let notify_typing_status = "{% url 'notify_typing_status' %}";
@@ -80,6 +91,7 @@
         let make_seen_by_me ="{% url 'seenByMe' %}"
         let myUsername = "{{ request.user.username }}";
         let myUserid = "{{ request.user.id }}";
+        let receiverId = "{{ request.session.receiver }}";
     </script>
     
 </body>

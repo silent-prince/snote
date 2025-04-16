@@ -16,8 +16,8 @@ def aarumi_login(request):
     return manageLogin.aarumi_login(request)
 def user_list(request):
     return manageLogin.user_list(request)
-def user_logout(request):   
-    return manageLogin.user_logout(request)
+def raya_logout(request):   
+    return manageLogin.raya_logout(request)
 def notify_typing_status(request):
     return manage_pusher.notify_typing_status(request)
 
