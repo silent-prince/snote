@@ -9,9 +9,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
     
+    <script src="{% static 'js/typing.js' %}"></script>
     <script src="{% static 'js/helper.js' %}"></script>
     <script src="{% static 'js/dragger.js' %}"></script>
-    <script src="{% static 'js/test.js' %}"></script>
+    <script src="{% static 'js/scroll_to_ele.js' %}"></script>
     <script src="{% static 'js/elements.js' %}"></script>
     <script src="{% static 'js/dbops.js' %}" ></script>
     <script src="{% static 'js/aarumi.js' %}" ></script>
@@ -22,7 +23,11 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">Chat Arrumi</div>
+        <div class="chat-header">
+            <div class="header-title">Aarumi</div>
+            <div class="header-user"> {{ receiver_username }}</div>
+            <div class="header-logout"><a href="{% url 'user_logout' %}">Logout</a></div>
+        </div>
         <div class="chat-body" id="chat-body">
         {% for aarumi in aarumis %}
         {% if aarumi.sender == request.user %}
@@ -69,6 +74,7 @@
         
         let csrfToken = $("[name=csrfmiddlewaretoken]").val();
         let add_aarumi = "{% url 'add_aarumi' %}";
+        let notify_typing_status = "{% url 'notify_typing_status' %}";
         let get_missed_data= "{% url 'getMissedData' %}";
         let retry_failed_messages = "{% url 'retry_failed_messages' %}";
         let make_seen_by_me ="{% url 'seenByMe' %}"

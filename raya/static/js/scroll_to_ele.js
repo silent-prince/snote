@@ -1,18 +1,7 @@
 
 
 $(document).ready(function () {
-
-
-
-
-function minorVibrate() {
-    if (navigator.vibrate) {
-        navigator.vibrate(15); // Short vibration (15ms) for subtle feedback
-    }
-}
-
    
-
 //for scroll to replied element
 $("#chat-body").on('click','.chat-message .reply',function(){
     console.log("clicked on message");

@@ -1,4 +1,4 @@
-from .my_imports import login_required, helper,pusher,db_ops_aarumi,json,Aarumi,manage_pusher,JsonResponse,render
+from .my_imports import login_required, helper,pusher,db_ops_aarumi,json,Aarumi,manage_pusher,JsonResponse,render,User
 
 @login_required
 def aarumi_home(request):
@@ -8,7 +8,8 @@ def aarumi_home(request):
         manage_pusher.makeAllSeen(request)
     aarumis=db_ops_aarumi.getAarumis(request)
     #print(aarumis)
-    return render(request,'aarumi.html',{"aarumis":aarumis})
+    receiver_username=User.objects.get(id=request.session["receiver"]).username
+    return render(request,'aarumi.html',{"aarumis":aarumis,"receiver_username":receiver_username})
 
 @login_required
 def add_aarumi(request):

@@ -21,6 +21,7 @@ return aarumiId;
 }
 function createReceivedElement(data){
     let now=new Date();
+    $('.typing-indicator').remove(); // Remove the typing indicator when a new message is received
     createElement(data.id,data.message,data.replyMessage,data.replyFrom,"received","no_status","old",data.replyId,now);
 }
 function updateElement(temp_aarumi_id,savedData){

@@ -10,3 +10,4 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
 from . import manage_pusher,db_ops_aarumi,helper
+from django.contrib.auth.models import User

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .user-item:hover {
+            background-color: #f0f0f0;
+        }
+        .user-item span {
+            flex: 1;
+            text-align: left;
+        }
+        .user-item span:first-child {
+            flex: 0.2;
+        }
+        .user-item span:nth-child(2) {
+            flex: 0.4;
+        }
+        .user-item span:last-child {
+            flex: 0.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User List</h1>
+        <form id="userForm" method="POST" action="{% url 'user_list' %}">
+            {% csrf_token %}
+            <div class="user-list">
+                {% for user in users %}
+                <div data-user-id="{{ user.id }}" class="user-item">
+                    <span>{{ user.id }}</span>
+                    <span>{{ user.username }}</span>
+                    <span>{{ user.email }}</span>
+                </div>
+                {% empty %}
+                <div style="text-align: center;">No users found.</div>
+                {% endfor %}
+            </div>
+        </form>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const userItems = document.querySelectorAll('.user-item');
+                const form = document.getElementById('userForm');
+
+                userItems.forEach(function(item) {
+                    item.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-user-id');
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'receiver_id';
+                        input.value = userId;
+                        form.appendChild(input);
+                        form.submit();
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

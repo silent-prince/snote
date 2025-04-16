@@ -1,4 +1,4 @@
-from .my_imports import login_required,Aarumi,pusher,json
+from .my_imports import login_required,Aarumi,pusher,json,JsonResponse
 
 
 pusher_client = pusher.Pusher(
@@ -58,3 +58,13 @@ def makeAllSeen(request):
         'is_seen_or_is_received':rtatus
     })
     return response
+def notify_typing_status(request):
+    try:
+        receiver_id = request.session.get("receiver")
+        receiver_channel = f'receiver-channel-{receiver_id}'
+        response = pusher_client.trigger(receiver_channel, 'user-typing-event', {
+            'typing': True
+        })
+        return JsonResponse({"success": True}, status=200)
+    except json.JSONDecodeError as e:
+        return JsonResponse({"success": False, "error": "Invalid JSON", "details": str(e)}, status=400)

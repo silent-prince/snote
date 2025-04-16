@@ -69,6 +69,9 @@ receiverChannel.bind('new-aarumi-event2', function(data) {//new message received
         seenByMe(newArrumiIds,"is_received");//if user1 is not on current screen send status received
     }
 });
+receiverChannel.bind('user-typing-event', function(data) { // user2 is typing
+setTyingIsTrue(data);// find this in typing.js
+});
 
 receiverChannel.bind('all-seen-event', function(data) { // user2 sends update either he seen message or received message
     console.log("all-seen-event is_seen_or_is_received  "+data.is_seen_or_is_received);
@@ -115,11 +118,11 @@ pusher.connection.bind('connected', function() {
 document.addEventListener("visibilitychange", function () {
     const now = new Date().toLocaleString(); // Example: "4/7/2025, 10:34:22 AM"
     if (document.hidden) {
-        console.log(`[${now}] User is not seeing the page anymore.`);
+        //console.log(`[${now}] User is not seeing the page anymore.`);
         inFocus=false;
         // Trigger pause-like action
     } else {
-        console.log(`[${now}] User came back to the page.`);
+        //console.log(`[${now}] User came back to the page.`);
         inFocus=true;
         if (receivedAarumiIds.size > 0) {
             let idsArray = Array.from(receivedAarumiIds);

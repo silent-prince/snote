@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "snote.urls"
-LOGIN_URL = '/notes_login/'
+LOGIN_URL = '/aarumi_login/'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

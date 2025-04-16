@@ -1,6 +1,11 @@
 let isDragging = false;
     let startX = 0;
 let limit = 100
+function minorVibrate() {
+  if (navigator.vibrate) {
+      navigator.vibrate(15); // Short vibration (15ms) for subtle feedback
+  }
+}
     function handleStart(e, $elem) {
       isDragging = true;
       startX = e.pageX || e.originalEvent.touches[0].pageX;
@@ -17,6 +22,7 @@ let limit = 100
           if (diffX >= limit) {
             isDragging = false;
             $(document).off(".drag");
+            minorVibrate();
             console.log("draggged");
             setReply($elem);
             $elem.css("transform", "translateX(0px)");
