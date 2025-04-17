@@ -5,6 +5,8 @@ from .modules import manage_aarumi,manageLogin,manage_pusher
 def aarumi_home(request):
     return manage_aarumi.aarumi_home(request)
 def add_aarumi(request):
+    if request.session.get("receiver") == "123":#raya id
+        return manage_ai.handle_request(request)
     return manage_aarumi.add_aarumi(request)
 def seenByMe(request):
     return manage_aarumi.seenByMe(request)
